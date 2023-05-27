@@ -48,23 +48,28 @@ def generate_prime(key_size=1024):
 
 def generate_key(key_size):
     # Step 1: Create two prime numbers, p and q. Calculate n = p * q.
-    print('Generating p prime...')
+    # print('Generating p prime...')
     p = generate_prime(key_size)
-    print('Generating q prime...')
+    # print('Generating q prime...')
     q = generate_prime(key_size)
     n = p * q
     # Step 2: Create a number e that is relatively prime to (p-1)*(q-1).
-    print('Generating e that is relatively prime to (p-1)*(q-1)...')
+    # print('Generating e that is relatively prime to (p-1)*(q-1)...')
     while True:
         e = random.randrange(1 << (key_size - 1), 1 << key_size)
         if gcd(e, (p - 1) * (q - 1)) == 1:
             break
 
     # Step 3: Calculate d, the mod inverse of e.
-    print('Calculating d that is mod inverse of e...')
+    # print('Calculating d that is mod inverse of e...')
     d = get_mod_inverse(e, (p - 1) * (q - 1))
     publicKey = (n, e)
     privateKey = (n, d)
-    print('Public key:', publicKey)
-    print('Private key:', privateKey)
-    return publicKey, privateKey
+    # print('Public key:', publicKey)
+    # print('Private key:', privateKey)
+    # Step 4: Optimize
+    d_p = get_mod_inverse(e, p - 1)
+    d_q = get_mod_inverse(e, q - 1)
+    q_Inv = get_mod_inverse(q, p)
+    optimizedPrivateKey = (d_p, d_q, q_Inv, p, q)
+    return publicKey, privateKey, optimizedPrivateKey
